@@ -1,7 +1,6 @@
 package com.crownedjester.soft.currenciesinfo.domain.repository
 
 import com.crownedjester.soft.currenciesinfo.data.NBRBServiceApi
-import com.crownedjester.soft.currenciesinfo.data.RemoteServiceRepository
 import com.crownedjester.soft.currenciesinfo.data.model.CurrencyDto
 import javax.inject.Inject
 

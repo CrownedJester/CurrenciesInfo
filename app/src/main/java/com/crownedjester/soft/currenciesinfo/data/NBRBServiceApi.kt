@@ -6,6 +6,6 @@ import retrofit2.http.Query
 
 interface NBRBServiceApi {
 
-    @GET("https://www.nbrb.by/Services/XmlExRates.aspx")
+    @GET("/Services/XmlExRates.aspx")
     suspend fun getCurrenciesData(@Query("ondate") date: String): List<CurrencyDto>
 }

@@ -1,4 +1,4 @@
-package com.crownedjester.soft.currenciesinfo.data
+package com.crownedjester.soft.currenciesinfo.domain.repository
 
 import com.crownedjester.soft.currenciesinfo.data.model.CurrencyDto
 

@@ -8,7 +8,7 @@ class RemoteServiceRepositoryImpl @Inject constructor(private val remoteServiceA
     RemoteServiceRepository {
 
     override suspend fun getCurrenciesData(date: String): List<CurrencyDto> {
-        return remoteServiceApi.getCurrenciesData(date)
+        return remoteServiceApi.getCurrenciesData(date).currenciesData
     }
 
 

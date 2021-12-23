@@ -6,13 +6,86 @@
     android:layout_height="match_parent"
     tools:context=".representation.MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/action_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/action_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_view_current_destination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="Current fragment title" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_vertical_center"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_vertical_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_vertical_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <View
+        android:id="@+id/view_date_background"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="@color/view_date_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar_main" />
+
     <TextView
+        android:id="@+id/text_view_today_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="12.11.17"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/view_date_background"
+        app:layout_constraintEnd_toStartOf="@id/gl_vertical_center"
+        app:layout_constraintStart_toEndOf="@id/gl_vertical_left"
+        app:layout_constraintTop_toTopOf="@id/view_date_background" />
+
+    <TextView
+        android:id="@+id/text_view_alternative_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="13.11.17"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/view_date_background"
+        app:layout_constraintEnd_toStartOf="@id/gl_vertical_right"
+        app:layout_constraintStart_toEndOf="@id/gl_vertical_center"
+        app:layout_constraintTop_toTopOf="@id/view_date_background" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container_view"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/view_date_background"
+        app:navGraph="@navigation/nav_graph" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.crownedjester.soft.currenciesinfo.di
 
 import com.crownedjester.soft.currenciesinfo.common.Constants.BASE_URL
 import com.crownedjester.soft.currenciesinfo.data.NBRBServiceApi
+import com.crownedjester.soft.currenciesinfo.data.createClient
 import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepository
 import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepositoryImpl
 import dagger.Module
@@ -21,6 +22,7 @@ object AppModule {
     fun providesRemoteService(): NBRBServiceApi =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(createClient())
             .addConverterFactory(SimpleXmlConverterFactory.create())
             .build()
             .create(NBRBServiceApi::class.java)

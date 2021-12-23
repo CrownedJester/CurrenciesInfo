@@ -1,9 +1,9 @@
 package com.crownedjester.soft.currenciesinfo.domain.use_case.get_currencies
 
 import com.crownedjester.soft.currenciesinfo.common.Response
-import com.crownedjester.soft.currenciesinfo.data.RemoteServiceRepository
 import com.crownedjester.soft.currenciesinfo.data.model.toCurrency
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
+import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -16,7 +16,11 @@ class GetCurrenciesData @Inject constructor(private val repository: RemoteServic
         try {
             val result =
                 repository.getCurrenciesData(date).map { currencyDto -> currencyDto.toCurrency() }
-            emit(Response.Success(result))
+            if (result.isEmpty()) {
+                emit(Response.Empty(message = "Response is empty"))
+            } else {
+                emit(Response.Success(result))
+            }
         } catch (e: HttpException) {
             emit(Response.Error(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) {

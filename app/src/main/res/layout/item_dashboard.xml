@@ -40,12 +40,13 @@
 
     <TextView
         android:id="@+id/text_view_currency_scale_plus_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
         android:padding="2dp"
         android:text="1 доллар США"
+        app:layout_constraintEnd_toStartOf="@id/gl_vertical_left"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_view_currency_code" />
 

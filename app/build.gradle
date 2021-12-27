@@ -74,4 +74,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_ver"
 
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 }

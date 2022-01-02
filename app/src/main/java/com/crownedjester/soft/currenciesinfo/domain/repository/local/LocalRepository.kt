@@ -1,4 +1,4 @@
-package com.crownedjester.soft.currenciesinfo.domain
+package com.crownedjester.soft.currenciesinfo.domain.repository.local
 
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import java.io.File

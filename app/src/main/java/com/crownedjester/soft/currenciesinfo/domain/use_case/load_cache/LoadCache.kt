@@ -1,6 +1,6 @@
 package com.crownedjester.soft.currenciesinfo.domain.use_case.load_cache
 
-import com.crownedjester.soft.currenciesinfo.domain.LocalRepository
+import com.crownedjester.soft.currenciesinfo.domain.repository.local.LocalRepository
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import java.io.File
 import javax.inject.Inject

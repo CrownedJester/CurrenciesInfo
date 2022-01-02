@@ -3,10 +3,10 @@ package com.crownedjester.soft.currenciesinfo.di
 import com.crownedjester.soft.currenciesinfo.common.Constants.BASE_URL
 import com.crownedjester.soft.currenciesinfo.data.NBRBServiceApi
 import com.crownedjester.soft.currenciesinfo.data.createClient
-import com.crownedjester.soft.currenciesinfo.domain.LocalRepository
-import com.crownedjester.soft.currenciesinfo.domain.LocalRepositoryImpl
-import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepository
-import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepositoryImpl
+import com.crownedjester.soft.currenciesinfo.domain.repository.local.LocalRepository
+import com.crownedjester.soft.currenciesinfo.domain.repository.local.LocalRepositoryImpl
+import com.crownedjester.soft.currenciesinfo.domain.repository.remote.RemoteServiceRepository
+import com.crownedjester.soft.currenciesinfo.domain.repository.remote.RemoteServiceRepositoryImpl
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
 import com.crownedjester.soft.currenciesinfo.domain.use_case.get_currencies.GetCurrenciesData
 import com.crownedjester.soft.currenciesinfo.domain.use_case.load_cache.LoadCache

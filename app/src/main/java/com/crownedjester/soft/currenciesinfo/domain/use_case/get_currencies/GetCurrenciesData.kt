@@ -3,7 +3,7 @@ package com.crownedjester.soft.currenciesinfo.domain.use_case.get_currencies
 import com.crownedjester.soft.currenciesinfo.common.Response
 import com.crownedjester.soft.currenciesinfo.data.model.toCurrency
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
-import com.crownedjester.soft.currenciesinfo.domain.repository.RemoteServiceRepository
+import com.crownedjester.soft.currenciesinfo.domain.repository.remote.RemoteServiceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException

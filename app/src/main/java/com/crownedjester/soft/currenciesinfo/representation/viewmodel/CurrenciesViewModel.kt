@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crownedjester.soft.currenciesinfo.common.Response
+import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.MODE_SEND
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getCurrentDate
@@ -77,5 +78,10 @@ class CurrenciesViewModel @Inject constructor(
             }
         }
     }
+
+    fun saveCache(data: List<Currency>, dir: String) =
+        useCases.saveCache(data, dir)
+
+
 
 }

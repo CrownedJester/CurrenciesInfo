@@ -2,14 +2,13 @@ package com.crownedjester.soft.currenciesinfo.representation.settings
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
@@ -32,13 +31,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSettingsBinding.bind(view)
+
         itemTouchHelper.attachToRecyclerView(binding.rvSettings)
+
         binding.rvSettings.adapter = settingsAdapter
+
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.todayCurrenciesState.collectLatest { state ->
-                    settingsAdapter.differ.submitList(state.data)
-                }
+            viewModel.todayCurrenciesState.collectLatest { state ->
+                settingsAdapter.differ.submitList(state.data)
+                Log.i("Settings Fragment", state.data.toString())
+
             }
         }
 
@@ -78,6 +80,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
                 adapter.moveItem(from, to)
                 adapter.notifyItemMoved(from, to)
+
+                Log.i("Settings Fragment", adapter.differ.currentList.toString())
 
                 return true
             }

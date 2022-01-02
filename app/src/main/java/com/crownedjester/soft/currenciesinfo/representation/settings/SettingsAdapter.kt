@@ -41,10 +41,10 @@ class SettingsAdapter :
 
                     if (currency.isTracking) {
                         Log.i("Settings Adapter", "${currency.charCode} is tracking now")
+                        Log.i("Settings Adapter", "${differ.currentList}")
                     } else {
                         Log.i("Settings Adapter", "${currency.charCode} remove from tracking")
                     }
-                    differ.submitList(differ.currentList)
                 }
             }
         }
@@ -79,8 +79,8 @@ class SettingsAdapter :
             fromLocation.position = to - 1
         }
 
-        differ.submitList(list)
-
+        Log.i("SettingsAdapter", "From $from to $to")
+        Log.i("SettingsAdapter", "${differ.currentList}")
     }
 
 }

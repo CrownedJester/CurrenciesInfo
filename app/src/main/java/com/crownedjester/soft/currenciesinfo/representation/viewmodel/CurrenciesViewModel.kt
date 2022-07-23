@@ -1,7 +1,6 @@
 package com.crownedjester.soft.currenciesinfo.representation.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crownedjester.soft.currenciesinfo.common.Response
@@ -12,8 +11,6 @@ import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.TOMORR
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.YESTERDAY_CODE
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getAlternativeDate
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getCurrentDate
-import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getTomorrowDate
-import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getYesterdayDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +25,9 @@ class CurrenciesViewModel @Inject constructor(
     private val useCases: UseCases
 ) : ViewModel() {
 
-    val isTomorrowsDataNotExists = MutableLiveData(false)
+    private val _isTomorrowDataExistsStateFlow = MutableStateFlow(true)
+    val isTomorrowsDataExistsStateFlow: StateFlow<Boolean> = _isTomorrowDataExistsStateFlow
+
     private val _todayCurrenciesState = MutableStateFlow(CurrenciesState())
     val todayCurrenciesState: StateFlow<CurrenciesState> = _todayCurrenciesState
 
@@ -46,45 +45,55 @@ class CurrenciesViewModel @Inject constructor(
             useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, YESTERDAY_CODE))
         ) { today, tomorrow, yesterday ->
             if (today is Response.Error) {
-                Log.i("ViewModel", "Combine stop because of error occurred")
+                Log.e("ViewModel", "Combine stop because of error occurred")
                 return@combine today
             }
 
+            Log.i("ViewModel", "Today's data loaded -> ${today.data?.isNotEmpty()}")
+            Log.i("ViewModel", "Tomorrow's data loaded -> ${tomorrow.data?.isNotEmpty()}")
+            Log.i("ViewModel", "Yesterday's data loaded -> ${yesterday.data?.isNotEmpty()}")
+
             if (tomorrow is Response.Empty) {
-                Log.i("ViewModel", "Using yesterday's data")
-                isTomorrowsDataNotExists.value = true
-                Log.i("ViewModel", "${isTomorrowsDataNotExists.value}")
-                today.data?.mapIndexed { i, currency ->
+
+                Log.d("ViewModel", "Using yesterday's data")
+
+                _isTomorrowDataExistsStateFlow.emit(false)
+
+                today.data?.forEachIndexed { i, currency ->
+                    currency.position = i
+
                     currency.alternativeRate = yesterday.data?.get(i)?.rate!!
-                    currency.position = i
                 }
+
             } else {
-                isTomorrowsDataNotExists.postValue(false)
+
                 Log.i("ViewModel", "Using tomorrow's data")
-                today.data?.mapIndexed { i, currency ->
-                    currency.alternativeRate = tomorrow.data?.get(i)?.rate!!
+
+                _isTomorrowDataExistsStateFlow.emit(true)
+
+                today.data?.forEachIndexed { i, currency ->
                     currency.position = i
+                    currency.alternativeRate = tomorrow.data?.get(i)?.rate!!
                 }
             }
 
             today
         }.collectLatest { result ->
+
             when (result) {
                 is Response.Success -> {
                     _todayCurrenciesState.value = CurrenciesState(data = result.data)
 
-                    Log.i("ViewModel", result.data.toString())
                 }
                 is Response.Error -> {
                     _todayCurrenciesState.value = CurrenciesState(error = result.message)
                 }
+                else -> {}
             }
         }
     }
 
     fun saveCache(data: List<Currency>, dir: String) =
         useCases.saveCache(data, dir)
-
-
 
 }

@@ -8,6 +8,9 @@ import com.crownedjester.soft.currenciesinfo.common.Response
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.MODE_SEND
+import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.TOMORROW_CODE
+import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.YESTERDAY_CODE
+import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getAlternativeDate
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getCurrentDate
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getTomorrowDate
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.getYesterdayDate
@@ -39,8 +42,8 @@ class CurrenciesViewModel @Inject constructor(
         Log.i("ViewModel", "Flows running")
         combine(
             useCases.getCurrenciesData(getCurrentDate(MODE_SEND)),
-            useCases.getCurrenciesData(getTomorrowDate(MODE_SEND)),
-            useCases.getCurrenciesData(getYesterdayDate(MODE_SEND))
+            useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, TOMORROW_CODE)),
+            useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, YESTERDAY_CODE))
         ) { today, tomorrow, yesterday ->
             if (today is Response.Error) {
                 Log.i("ViewModel", "Combine stop because of error occurred")

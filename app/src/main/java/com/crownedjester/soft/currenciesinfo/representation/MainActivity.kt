@@ -14,8 +14,11 @@ import com.crownedjester.soft.currenciesinfo.R
 import com.crownedjester.soft.currenciesinfo.databinding.ActivityMainBinding
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.MODE_DEPLOY
+import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.TOMORROW_CODE
+import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.YESTERDAY_CODE
 import com.crownedjester.soft.currenciesinfo.representation.viewmodel.CurrenciesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -38,18 +41,23 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             textViewTodayDate.text = DateUtil.getCurrentDate(MODE_DEPLOY)
-            textViewAlternativeDate.text =
-                if (viewModel.isTomorrowsDataNotExists.value!!) DateUtil.getYesterdayDate(
-                    MODE_DEPLOY
-                ) else DateUtil.getTomorrowDate(MODE_DEPLOY)
 
+            lifecycleScope.launchWhenCreated {
+
+                viewModel.isTomorrowsDataExistsStateFlow.collectLatest {
+                    this@apply.textViewAlternativeDate.text =
+                        if (it) DateUtil.getAlternativeDate(
+                            MODE_DEPLOY, TOMORROW_CODE
+                        ) else DateUtil.getAlternativeDate(MODE_DEPLOY, YESTERDAY_CODE)
+                }
+            }
             actionBarMain.apply {
                 val currentDestinationTitle =
                     this.findViewById<TextView>(R.id.text_view_current_destination)
 
 
                 navController.addOnDestinationChangedListener { _, destination, _ ->
-                    title = ""
+                    this.title = ""
                     currentDestinationTitle.text = destination.label
 
                     if (destination.id == R.id.settingsFragment) {

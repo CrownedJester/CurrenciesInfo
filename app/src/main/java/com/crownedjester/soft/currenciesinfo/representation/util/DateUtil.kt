@@ -10,6 +10,8 @@ object DateUtil {
 
     const val MODE_SEND = 0
     const val MODE_DEPLOY = 1
+    const val TOMORROW_CODE = 0
+    const val YESTERDAY_CODE = 1
 
 
     fun getCurrentDate(mode: Int): String {
@@ -23,27 +25,15 @@ object DateUtil {
         return sdf.format(date)
     }
 
-    fun getTomorrowDate(mode: Int): String {
+    fun getAlternativeDate(mode: Int, dateCode: Int): String {
         val calendar = Calendar.getInstance()
-        val sdf: SimpleDateFormat
-        if (mode == MODE_SEND) {
-            sdf = SimpleDateFormat(sdfPatternSend, Locale.getDefault())
+        val sdf = if (mode == MODE_SEND) {
+            SimpleDateFormat(sdfPatternSend, Locale.getDefault())
         } else {
-            sdf = SimpleDateFormat(sdfPatternDeploy, Locale.getDefault())
+            SimpleDateFormat(sdfPatternDeploy, Locale.getDefault())
         }
-        calendar.add(Calendar.DATE, +1)
+        calendar.add(Calendar.DATE, if (dateCode == TOMORROW_CODE) +1 else -1)
         return sdf.format(calendar.time)
     }
 
-    fun getYesterdayDate(mode: Int): String {
-        val calendar = Calendar.getInstance()
-        val sdf: SimpleDateFormat
-        if (mode == MODE_SEND) {
-            sdf = SimpleDateFormat(sdfPatternSend, Locale.getDefault())
-        } else {
-            sdf = SimpleDateFormat(sdfPatternDeploy, Locale.getDefault())
-        }
-        calendar.add(Calendar.DATE, -1)
-        return sdf.format(calendar.time)
-    }
 }

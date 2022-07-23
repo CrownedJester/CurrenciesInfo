@@ -71,7 +71,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private val itemTouchHelper by lazy {
-        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(UP or DOWN, 0) {
+        val simpleItemTouchCallback = object : SimpleCallback(UP or DOWN, 0) {
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -83,9 +83,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 val to = target.adapterPosition
 
                 adapter.moveItem(from, to)
-                adapter.notifyItemMoved(from, to)
-
-                Log.i("Settings Fragment", adapter.differ.currentList.toString())
 
                 return true
             }

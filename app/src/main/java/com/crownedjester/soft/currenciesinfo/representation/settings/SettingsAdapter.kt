@@ -15,7 +15,7 @@ class SettingsAdapter :
 
     private val differCallBack = object : DiffUtil.ItemCallback<Currency>() {
         override fun areItemsTheSame(oldItem: Currency, newItem: Currency): Boolean =
-            oldItem.numCode == newItem.numCode
+            oldItem.charCode == newItem.charCode
 
         override fun areContentsTheSame(oldItem: Currency, newItem: Currency): Boolean =
             oldItem == newItem
@@ -24,7 +24,7 @@ class SettingsAdapter :
 
     val differ = AsyncListDiffer(this, differCallBack)
 
-    inner class SettingsViewHolder(private val binding: ItemSettingsBinding) :
+    inner class SettingsViewHolder(val binding: ItemSettingsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
@@ -41,7 +41,6 @@ class SettingsAdapter :
 
                     if (currency.isTracking) {
                         Log.i("Settings Adapter", "${currency.charCode} is tracking now")
-                        Log.i("Settings Adapter", "${differ.currentList}")
                     } else {
                         Log.i("Settings Adapter", "${currency.charCode} remove from tracking")
                     }
@@ -67,20 +66,44 @@ class SettingsAdapter :
         differ.currentList.size
 
 
+    override fun onViewRecycled(holder: SettingsViewHolder) {
+        super.onViewRecycled(holder)
+        holder.binding.switchIsTracking.setOnCheckedChangeListener(null)
+    }
+
     fun moveItem(from: Int, to: Int) {
         val list = differ.currentList.toMutableList()
+
         val fromLocation = list[from]
+
         list.removeAt(from)
+
         if (to < from) {
+
             list.add(to + 1, fromLocation)
-            fromLocation.position = to + 1
+
         } else {
+
             list.add(to - 1, fromLocation)
-            fromLocation.position = to - 1
+
         }
 
-        Log.i("SettingsAdapter", "From $from to $to")
-        Log.i("SettingsAdapter", "${differ.currentList}")
+        list.forEachIndexed { i, curr ->
+            curr.position = i
+        }
+
+        differ.submitList(list)
+
+        differ.currentList.also {
+            for (i in 1 until it.size step 2) {
+
+                Log.i(
+                    "SettingsAdapter",
+                    "${it[i - 1].position} - ${it[i - 1].charCode}; ${it[i].position} - ${it[i].charCode}; "
+                )
+
+            }
+        }
     }
 
 }

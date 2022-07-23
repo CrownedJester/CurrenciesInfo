@@ -7,7 +7,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +24,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding
-    private val viewModel by viewModels<CurrenciesViewModel>()
+    private val viewModel by activityViewModels<CurrenciesViewModel>()
     private val dashboardAdapter: CurrencyDashboardAdapter = CurrencyDashboardAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -7,7 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -25,7 +25,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<CurrenciesViewModel>()
+
+    private val viewModel by activityViewModels<CurrenciesViewModel>()
+
     private var settingsAdapter: SettingsAdapter = SettingsAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

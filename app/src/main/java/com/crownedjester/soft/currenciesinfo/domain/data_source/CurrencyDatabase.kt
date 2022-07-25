@@ -2,11 +2,11 @@ package com.crownedjester.soft.currenciesinfo.domain.data_source
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.crownedjester.soft.currenciesinfo.domain.model.Currency
+import com.crownedjester.soft.currenciesinfo.domain.model.CachedCurrency
 
 @Database(
     version = 1,
-    entities = [Currency::class]
+    entities = [CachedCurrency::class]
 )
 abstract class CurrencyDatabase : RoomDatabase() {
 

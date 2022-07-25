@@ -3,7 +3,10 @@ package com.crownedjester.soft.currenciesinfo.representation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crownedjester.soft.currenciesinfo.common.Constants.DEFAULT_CURRENCIES
 import com.crownedjester.soft.currenciesinfo.common.Response
+import com.crownedjester.soft.currenciesinfo.domain.model.CachedCurrency
+import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.MODE_SEND
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.TOMORROW_CODE
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "ViewModel"
 
 @HiltViewModel
 class CurrenciesViewModel @Inject constructor(
@@ -41,9 +45,9 @@ class CurrenciesViewModel @Inject constructor(
         combine(
             useCases.getCurrenciesData(getCurrentDate(MODE_SEND)),
             useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, TOMORROW_CODE)),
-            useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, YESTERDAY_CODE))
-//            useCases.loadCache(Environment.getExternalStorageState(File(FILENAME)))
-        ) { today, tomorrow, yesterday ->
+            useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, YESTERDAY_CODE)),
+            useCases.loadCache()
+        ) { today, tomorrow, yesterday, cachedCurrencies ->
             if (today is Response.Error) {
                 Log.e("ViewModel", "Combine stop because of error occurred")
                 return@combine today
@@ -60,9 +64,16 @@ class CurrenciesViewModel @Inject constructor(
                 _isTomorrowDataExistsStateFlow.emit(false)
 
                 today.data?.forEachIndexed { i, currency ->
-                    currency.position = i
 
-                    currency.alternativeRate = yesterday.data?.get(i)?.rate!!
+                    currency.apply {
+                        position = i
+
+                        applyCachedState(cachedCurrencies)
+
+                        alternativeRate = yesterday.data?.get(i)?.rate!!
+                    }
+
+
                 }
 
             } else {
@@ -72,8 +83,15 @@ class CurrenciesViewModel @Inject constructor(
                 _isTomorrowDataExistsStateFlow.emit(true)
 
                 today.data?.forEachIndexed { i, currency ->
-                    currency.position = i
-                    currency.alternativeRate = tomorrow.data?.get(i)?.rate!!
+
+                    currency.apply {
+                        position = i
+
+                        applyCachedState(cachedCurrencies)
+
+                        alternativeRate = tomorrow.data?.get(i)?.rate!!
+
+                    }
                 }
             }
 
@@ -90,8 +108,53 @@ class CurrenciesViewModel @Inject constructor(
                 }
                 else -> {}
             }
+
         }
     }
 
+    fun saveCache(data: List<Currency>) {
+        viewModelScope.launch {
+            useCases.saveCache(data)
+
+            useCases.loadCache().collectLatest {
+
+                if (it.size > _todayCurrenciesState.value.data?.size!!) {
+
+                    clearCache()
+                    Log.d(TAG, "Cache cleared because of many redundant notes")
+
+                } else {
+
+                    useCases.saveCache(data)
+                    Log.d(TAG, "Notes were re-populated")
+
+                }
+
+            }
+
+        }
+    }
+
+    private fun clearCache() {
+        viewModelScope.launch {
+            useCases.clearCache()
+        }
+    }
+
+    private fun Currency.applyCachedState(cachedData: List<CachedCurrency>) {
+        if (cachedData.isEmpty()) {
+            if (this.charCode in DEFAULT_CURRENCIES) this.isTracking = true
+        } else {
+            cachedData.forEach { cachedCurrency ->
+                if (this.charCode == cachedCurrency.charCode) {
+                    this.apply {
+                        this.position = cachedCurrency.position
+
+                        this.isTracking = cachedCurrency.isTracking
+                    }
+                }
+            }
+        }
+    }
 
 }

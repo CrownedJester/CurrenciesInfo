@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -41,7 +42,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         lifecycleScope.launch {
             viewModel.todayCurrenciesState.collectLatest { state ->
-                settingsAdapter.differ.submitList(state.data)
+                if (state.error.isNotBlank()) {
+                    Toast.makeText(context, "Error occurred", Toast.LENGTH_LONG).show()
+                } else {
+                    settingsAdapter.differ.submitList(state.data)
+                }
                 Log.i("Settings Fragment", state.data.toString())
 
             }
@@ -61,6 +66,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         acceptChangesBtn.setOnMenuItemClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_dashboardFragment)
+
+            viewModel.saveCache(settingsAdapter.differ.currentList)
+
             false
         }
     }
@@ -106,7 +114,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 viewHolder.itemView.alpha = 1.0f
             }
         }
+
         ItemTouchHelper(simpleItemTouchCallback)
+
     }
 
 }

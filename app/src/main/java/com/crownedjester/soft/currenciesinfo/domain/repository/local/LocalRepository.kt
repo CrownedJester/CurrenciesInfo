@@ -1,14 +1,14 @@
 package com.crownedjester.soft.currenciesinfo.domain.repository.local
 
-import com.crownedjester.soft.currenciesinfo.domain.model.Currency
+import com.crownedjester.soft.currenciesinfo.domain.model.CachedCurrency
 import kotlinx.coroutines.flow.Flow
+
 
 interface LocalRepository {
 
-    fun loadCurrenciesCache(): Flow<List<Currency>>
+    fun loadCurrenciesCache(): Flow<List<CachedCurrency>>
 
-    suspend fun saveCurrenciesCache(data: List<Currency>)
+    suspend fun clearCache(): Int
 
-    suspend fun clearCache(): Boolean
-
+    suspend fun saveCurrenciesCache(vararg data: CachedCurrency)
 }

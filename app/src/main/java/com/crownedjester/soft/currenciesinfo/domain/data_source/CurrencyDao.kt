@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.crownedjester.soft.currenciesinfo.domain.model.Currency
+import com.crownedjester.soft.currenciesinfo.domain.model.CachedCurrency
 import kotlinx.coroutines.flow.Flow
 
 
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.Flow
 interface CurrencyDao {
 
     @Query("select * from currency_table")
-    fun retrieveCurrencies(): Flow<List<Currency>>
+    fun retrieveCurrencies(): Flow<List<CachedCurrency>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCurrency(currency: Currency)
+    suspend fun saveCurrencies(vararg currency: CachedCurrency)
 
     @Query("delete from currency_table")
-    suspend fun clearCache(): Boolean
+    suspend fun clearCache(): Int
 
 }

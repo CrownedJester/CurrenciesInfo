@@ -2,6 +2,7 @@ package com.crownedjester.soft.currenciesinfo.representation.dashboard
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -29,10 +30,20 @@ class CurrencyDashboardAdapter :
         @SuppressLint("SetTextI18n")
         fun bind(currency: Currency) {
             binding.apply {
+
                 textViewCurrencyCode.text = currency.charCode
                 textViewCurrencyScalePlusName.text = "${currency.scale} ${currency.name}"
                 textViewCurrencyRateToday.text = currency.rate.toString()
                 textViewCurrencyRateAlternative.text = currency.alternativeRate.toString()
+
+                itemView.visibility = if (currency.isTracking) View.VISIBLE else View.GONE
+                itemView.layoutParams = if (currency.isTracking)
+                    RecyclerView.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                else
+                    RecyclerView.LayoutParams(0, 0)
             }
         }
     }
@@ -46,9 +57,9 @@ class CurrencyDashboardAdapter :
     }
 
     override fun onBindViewHolder(holder: DashboardItemViewHolder, position: Int) {
-        val currencyToday = differ.currentList[position]
+        val currency = differ.currentList[position]
 
-        holder.bind(currencyToday)
+        holder.bind(currency)
     }
 
     override fun getItemCount(): Int =

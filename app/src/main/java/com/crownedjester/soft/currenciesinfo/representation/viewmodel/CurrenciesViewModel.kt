@@ -41,7 +41,7 @@ class CurrenciesViewModel @Inject constructor(
     }
 
     private suspend fun getCurrencies() {
-        Log.i("ViewModel", "Flows running")
+        Log.i(TAG, "Flows running")
         combine(
             useCases.getCurrenciesData(getCurrentDate(MODE_SEND)),
             useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, TOMORROW_CODE)),
@@ -49,17 +49,17 @@ class CurrenciesViewModel @Inject constructor(
             useCases.loadCache()
         ) { today, tomorrow, yesterday, cachedCurrencies ->
             if (today is Response.Error) {
-                Log.e("ViewModel", "Combine stop because of error occurred")
+                Log.e(TAG, "Combine stop because of error occurred")
                 return@combine today
             }
 
-            Log.i("ViewModel", "Today's data loaded -> ${today.data?.isNotEmpty()}")
-            Log.i("ViewModel", "Tomorrow's data loaded -> ${tomorrow.data?.isNotEmpty()}")
-            Log.i("ViewModel", "Yesterday's data loaded -> ${yesterday.data?.isNotEmpty()}")
+            Log.i(TAG, "Today's data loaded -> ${today.data?.isNotEmpty()}")
+            Log.i(TAG, "Tomorrow's data loaded -> ${tomorrow.data?.isNotEmpty()}")
+            Log.i(TAG, "Yesterday's data loaded -> ${yesterday.data?.isNotEmpty()}")
 
             if (tomorrow is Response.Empty) {
 
-                Log.d("ViewModel", "Using yesterday's data")
+                Log.d(TAG, "Using yesterday's data")
 
                 _isTomorrowDataExistsStateFlow.emit(false)
 
@@ -78,7 +78,7 @@ class CurrenciesViewModel @Inject constructor(
 
             } else {
 
-                Log.i("ViewModel", "Using tomorrow's data")
+                Log.i(TAG, "Using tomorrow's data")
 
                 _isTomorrowDataExistsStateFlow.emit(true)
 
@@ -100,11 +100,12 @@ class CurrenciesViewModel @Inject constructor(
 
             when (result) {
                 is Response.Success -> {
-                    _todayCurrenciesState.value = CurrenciesState(data = result.data)
+
+                    _todayCurrenciesState.emit(CurrenciesState(data = result.data?.sortedBy { it.position }))
 
                 }
                 is Response.Error -> {
-                    _todayCurrenciesState.value = CurrenciesState(error = result.message)
+                    _todayCurrenciesState.emit(CurrenciesState(error = result.message))
                 }
                 else -> {}
             }
@@ -114,23 +115,8 @@ class CurrenciesViewModel @Inject constructor(
 
     fun saveCache(data: List<Currency>) {
         viewModelScope.launch {
+
             useCases.saveCache(data)
-
-            useCases.loadCache().collectLatest {
-
-                if (it.size > _todayCurrenciesState.value.data?.size!!) {
-
-                    clearCache()
-                    Log.d(TAG, "Cache cleared because of many redundant notes")
-
-                } else {
-
-                    useCases.saveCache(data)
-                    Log.d(TAG, "Notes were re-populated")
-
-                }
-
-            }
 
         }
     }

@@ -66,8 +66,6 @@ class CurrenciesViewModel @Inject constructor(
                 today.data?.forEachIndexed { i, currency ->
 
                     currency.apply {
-                        position = i
-
                         applyCachedState(cachedCurrencies)
 
                         alternativeRate = yesterday.data?.get(i)?.rate!!
@@ -85,8 +83,6 @@ class CurrenciesViewModel @Inject constructor(
                 today.data?.forEachIndexed { i, currency ->
 
                     currency.apply {
-                        position = i
-
                         applyCachedState(cachedCurrencies)
 
                         alternativeRate = tomorrow.data?.get(i)?.rate!!

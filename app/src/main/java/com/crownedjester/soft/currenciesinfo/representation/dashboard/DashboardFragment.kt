@@ -37,9 +37,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.todayCurrenciesState.collectLatest { state ->
-                    dashboardAdapter.differ.submitList(state.data)
                     if (state.error.isNotBlank()) {
                         Toast.makeText(context, "Error occurred", Toast.LENGTH_LONG).show()
+                    }else {
+                        dashboardAdapter.differ.submitList(state.data)
                     }
                 }
             }

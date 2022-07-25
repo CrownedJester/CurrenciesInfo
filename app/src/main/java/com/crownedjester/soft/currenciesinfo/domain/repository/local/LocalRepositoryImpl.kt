@@ -1,42 +1,20 @@
 package com.crownedjester.soft.currenciesinfo.domain.repository.local
 
-import android.util.Log
+import com.crownedjester.soft.currenciesinfo.domain.data_source.CurrencyDao
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
-import java.io.*
+import kotlinx.coroutines.flow.Flow
 
-class LocalRepositoryImpl : LocalRepository {
+class LocalRepositoryImpl(private val dao: CurrencyDao) : LocalRepository {
+    override fun loadCurrenciesCache(): Flow<List<Currency>> =
+        dao.retrieveCurrencies()
 
-    override fun loadCache(file: File): List<Currency> {
-        return try {
-            val inputStream = ObjectInputStream(FileInputStream(file))
-            var result: List<Currency>
-            inputStream.use {
-                result = it.readObject() as List<Currency>
-                it.close()
-            }
-            result
-        } catch (e: IOException) {
-            Log.e("LocalRepo", "Error reading file")
-            emptyList()
+    override suspend fun saveCurrenciesCache(data: List<Currency>) {
+        data.forEach {
+            dao.addCurrency(it)
         }
     }
 
-    override fun saveCache(data: List<Currency>, dir: String): Boolean {
-        return try {
-            val file = File(dir)
-            val outputStream = ObjectOutputStream(FileOutputStream(file))
-            outputStream.use {
-                it.writeObject(data)
-                it.flush()
-                it.close()
-            }
-
-            true
-        } catch (e: IOException) {
-            Log.e("LocalRepo", "Error writing data")
-            false
-        }
-    }
-
+    override suspend fun clearCache(): Boolean =
+        dao.clearCache()
 
 }

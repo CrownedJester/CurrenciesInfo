@@ -1,13 +1,17 @@
 package com.crownedjester.soft.currenciesinfo.di
 
+import android.app.Application
+import androidx.room.Room
 import com.crownedjester.soft.currenciesinfo.common.Constants.BASE_URL
 import com.crownedjester.soft.currenciesinfo.data.NBRBServiceApi
 import com.crownedjester.soft.currenciesinfo.data.createClient
+import com.crownedjester.soft.currenciesinfo.domain.data_source.CurrencyDatabase
 import com.crownedjester.soft.currenciesinfo.domain.repository.local.LocalRepository
 import com.crownedjester.soft.currenciesinfo.domain.repository.local.LocalRepositoryImpl
 import com.crownedjester.soft.currenciesinfo.domain.repository.remote.RemoteServiceRepository
 import com.crownedjester.soft.currenciesinfo.domain.repository.remote.RemoteServiceRepositoryImpl
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
+import com.crownedjester.soft.currenciesinfo.domain.use_case.clear_cache.ClearCache
 import com.crownedjester.soft.currenciesinfo.domain.use_case.get_currencies.GetCurrenciesData
 import com.crownedjester.soft.currenciesinfo.domain.use_case.load_cache.LoadCache
 import com.crownedjester.soft.currenciesinfo.domain.use_case.save_cache.SaveCache
@@ -22,6 +26,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun providesDatabase(application: Application): CurrencyDatabase =
+        Room.databaseBuilder(
+            application,
+            CurrencyDatabase::class.java,
+            CurrencyDatabase.DB_NAME
+        ).build()
+
 
     @Provides
     @Singleton
@@ -40,8 +54,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesLocalRepository(): LocalRepository =
-        LocalRepositoryImpl()
+    fun providesLocalRepository(currencyDatabase: CurrencyDatabase): LocalRepository =
+        LocalRepositoryImpl(currencyDatabase.dao)
 
     @Provides
     @Singleton
@@ -52,6 +66,7 @@ object AppModule {
         UseCases(
             saveCache = SaveCache(localRepository),
             loadCache = LoadCache(localRepository),
-            getCurrenciesData = GetCurrenciesData(remoteRepository)
+            getCurrenciesData = GetCurrenciesData(remoteRepository),
+            clearCache = ClearCache(localRepository)
         )
 }

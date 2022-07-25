@@ -1,12 +1,24 @@
 package com.crownedjester.soft.currenciesinfo.domain.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "currency_table")
 data class Currency(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     val numCode: Int,
+    @ColumnInfo(name = "char_code")
     val charCode: String,
-    val scale: Int,
-    val name: String,
-    val rate: Double,
+
+    @Ignore val scale: Int,
+    @Ignore val name: String,
+    @Ignore val rate: Double,
+
+    @ColumnInfo(name = "tracking")
     var isTracking: Boolean = false,
-    var alternativeRate: Double = 0.0,
+    @Ignore var alternativeRate: Double = 0.0,
     var position: Int = 0
 )

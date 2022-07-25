@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crownedjester.soft.currenciesinfo.common.Response
-import com.crownedjester.soft.currenciesinfo.domain.model.Currency
 import com.crownedjester.soft.currenciesinfo.domain.use_case.UseCases
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.MODE_SEND
 import com.crownedjester.soft.currenciesinfo.representation.util.DateUtil.TOMORROW_CODE
@@ -43,6 +42,7 @@ class CurrenciesViewModel @Inject constructor(
             useCases.getCurrenciesData(getCurrentDate(MODE_SEND)),
             useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, TOMORROW_CODE)),
             useCases.getCurrenciesData(getAlternativeDate(MODE_SEND, YESTERDAY_CODE))
+//            useCases.loadCache(Environment.getExternalStorageState(File(FILENAME)))
         ) { today, tomorrow, yesterday ->
             if (today is Response.Error) {
                 Log.e("ViewModel", "Combine stop because of error occurred")
@@ -93,7 +93,5 @@ class CurrenciesViewModel @Inject constructor(
         }
     }
 
-    fun saveCache(data: List<Currency>, dir: String) =
-        useCases.saveCache(data, dir)
 
 }

@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.crownedjester.soft.currenciesinfo"
         minSdk 21
-        targetSdk 31
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -55,9 +55,10 @@ dependencies {
 
 
     // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    def retrofitVer = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVer"
 //    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation('com.squareup.retrofit2:converter-simplexml:2.9.0') {
+    implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVer") {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
         exclude group: 'xpp3', module: 'xpp3'
@@ -76,4 +77,12 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0"
+
+    //Room
+    def room_dep = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_dep"
+    kapt "androidx.room:room-compiler:$room_dep"
+
+    //Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_dep"
 }

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.crownedjester.soft.currenciesinfo.di
 
 import android.app.Application

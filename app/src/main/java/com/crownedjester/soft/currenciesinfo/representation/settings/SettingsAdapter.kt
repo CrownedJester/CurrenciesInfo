@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.crownedjester.soft.currenciesinfo.databinding.ItemSettingsBinding
 import com.crownedjester.soft.currenciesinfo.domain.model.Currency
+import com.crownedjester.soft.currenciesinfo.representation.compose_components.ComposableSwitch
 
 class SettingsAdapter :
     RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder>() {
@@ -34,16 +37,19 @@ class SettingsAdapter :
                 textViewCurrencyScalePlusName
                     .text = "${currency.scale} ${currency.name}"
 
-                switchIsTracking.isChecked = currency.isTracking
+                switchIsTracking.apply {
+                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
-                switchIsTracking.setOnCheckedChangeListener { _, isChecked ->
-                    currency.isTracking = isChecked
+                    setContent {
+                        ComposableSwitch(
+                            isFavorite = currency.isTracking,
+                            onCheckedChange = { currency.isTracking = it },
+                            thumbCheckedColor = Color.Black,
+                            thumbUncheckedColor = Color.Gray,
+                        )
 
-                    if (currency.isTracking) {
-                        Log.i("Settings Adapter", "${currency.charCode} is tracking now")
-                    } else {
-                        Log.i("Settings Adapter", "${currency.charCode} remove from tracking")
                     }
+
                 }
             }
         }
@@ -59,16 +65,16 @@ class SettingsAdapter :
     override fun onBindViewHolder(holder: SettingsViewHolder, position: Int) {
         val currency = differ.currentList[position]
 
+        holder.setIsRecyclable(false)
         holder.bind(currency)
     }
 
     override fun getItemCount(): Int =
         differ.currentList.size
 
-
     override fun onViewRecycled(holder: SettingsViewHolder) {
         super.onViewRecycled(holder)
-        holder.binding.switchIsTracking.setOnCheckedChangeListener(null)
+        holder.setIsRecyclable(false)
     }
 
     fun moveItem(from: Int, to: Int) {
@@ -105,5 +111,6 @@ class SettingsAdapter :
             }
         }
     }
+
 
 }
